@@ -23,8 +23,8 @@ K.set_learning_phase(1)
 #np.random.seed(0)
 MAX_SENT_LENGTH = 20  ###number of words in a sentence
 MAX_NB_WORDS = 20000
-EMBEDDING_DIM = 400
-POST_DIM = 30
+POST_DIM = 400
+INFO_DIM = 30
 VALIDATION_SPLIT = 0.2
 d_model = 100
 
@@ -213,14 +213,14 @@ postInfo = preprocessing.StandardScaler().fit_transform(postInfo)
 embeddings_index = Word2Vec.load_word2vec_format("word2vec_twitter_model.bin", binary=True)  #
 
 # print('Total %s word vectors.' % len(embeddings_index))
-embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
+embedding_matrix = np.random.random((len(word_index) + 1, POST_DIM))
 outword_dic = dict()
 for word, i in word_index.items():
     if word in embeddings_index.vocab:
         embedding_vector = embeddings_index[word]
         embedding_matrix[i] = embedding_vector
     else:
-        new_vector = np.random.rand(EMBEDDING_DIM, )
+        new_vector = np.random.rand(POST_DIM, )
         outword_dic.setdefault(word, new_vector)
         embedding_matrix[i] = outword_dic[word]
 for i in range(20):
@@ -260,7 +260,7 @@ for i in range(20):
     print (y_val.sum(axis=0))
 
     embedding_layer = Embedding(len(word_index) + 1,
-                                EMBEDDING_DIM,
+                                POST_DIM,
                                 weights=[embedding_matrix],
                                 input_length=MAX_SENT_LENGTH,
                                 trainable=True,
@@ -288,8 +288,8 @@ for i in range(20):
 
     ###embed the #likes, shares
     post_input = Input(shape=(4,))
-    # post_embedding = Dense(POST_DIM, activation='sigmoid')(post_input)
-    fully_post = Dense(POST_DIM, use_bias=False)(post_input)
+    # post_embedding = Dense(INFO_DIM, activation='sigmoid')(post_input)
+    fully_post = Dense(INFO_DIM, use_bias=False)(post_input)
     norm_fullypost = BatchNormalization()(fully_post)
     post_embedding = Activation(activation='relu')(norm_fullypost)
     x = concatenate([l_att_sent,
