@@ -177,7 +177,7 @@ for word, i in word_index.items():
         outword_dic.setdefault(word, new_vector)
         embedding_matrix[i] = outword_dic[word]
 
-for j in range(20):
+for j in range(10):
     indices = np.arange(data.shape[0])
     np.random.shuffle(indices)
     data1 = data[indices]
